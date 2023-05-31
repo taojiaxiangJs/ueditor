@@ -45,15 +45,15 @@ UE.plugin.register("autoupload", function() {
         me.options.theme +
         '/images/spacer.gif">';
       successHandler = function(data) {
-        var link = urlPrefix + data.url,
+        var link = urlPrefix + data.data,
           loader = me.document.getElementById(loadingId);
         if (loader) {
-          domUtils.removeClasses(loader, "loadingclass");
+            loader.setAttribute('src', link);
           loader.setAttribute("src", link);
-          loader.setAttribute("_src", link);
+            loader.setAttribute('title', data.title || '');
           loader.setAttribute("alt", data.original || "");
           loader.removeAttribute("id");
-          me.trigger("contentchange", loader);
+            domUtils.removeClasses(loader, 'loadingclass');
         }
       };
     } else {
@@ -67,7 +67,7 @@ UE.plugin.register("autoupload", function() {
         '/images/spacer.gif">' +
         "</p>";
       successHandler = function(data) {
-        var link = urlPrefix + data.url,
+        var link = urlPrefix + data.data,
           loader = me.document.getElementById(loadingId);
 
         var rng = me.selection.getRange(),
@@ -120,7 +120,7 @@ UE.plugin.register("autoupload", function() {
     xhr.addEventListener("load", function(e) {
       try {
         var json = new Function("return " + utils.trim(e.target.response))();
-        if (json.state == "SUCCESS" && json.url) {
+        if (json.code == 0 && json.data) {
           successHandler(json);
         } else {
           errorHandler(json.state);

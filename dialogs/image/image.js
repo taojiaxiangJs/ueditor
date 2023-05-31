@@ -177,22 +177,22 @@
             domUtils.on($G("title"), 'keyup', updatePreview);
 
             domUtils.on($G("width"), 'keyup', function(){
+                updatePreview();
                 if(locker.checked) {
                     var proportion =locker.getAttribute('data-proportion');
                     $G('height').value = Math.round(this.value / proportion);
                 } else {
                     _this.updateLocker();
                 }
-                updatePreview();
             });
             domUtils.on($G("height"), 'keyup', function(){
+                updatePreview();
                 if(locker.checked) {
                     var proportion =locker.getAttribute('data-proportion');
                     $G('width').value = Math.round(this.value * proportion);
                 } else {
                     _this.updateLocker();
                 }
-                updatePreview();
             });
             domUtils.on($G("lock"), 'change', function(){
                 var proportion = parseInt($G("width").value) /parseInt($G("height").value);
@@ -247,9 +247,9 @@
         },
         setPreview: function(){
             var url = $G('url').value,
-                ow = $G('width').value,
-                oh = $G('height').value,
-                border = $G('border').value,
+                ow = parseInt($G('width').value, 10) || 0,
+                oh = parseInt($G('height').value, 10) || 0,
+                border = parseInt($G('border').value, 10) || 0,
                 title = $G('title').value,
                 preview = $G('preview'),
                 width,
@@ -274,6 +274,7 @@
                     border: data['border'] || '',
                     floatStyle: data['align'] || '',
                     vspace: data['vhSpace'] || '',
+                    title: data['title'] || '',
                     alt: data['title'] || '',
                     style: "width:" + data['width'] + "px;height:" + data['height'] + "px;"
                 }];
@@ -665,10 +666,8 @@
             });
 
             uploader.on('fileDequeued', function (file) {
-                if (file.ext && acceptExtensions.indexOf(file.ext.toLowerCase()) != -1 && file.size <= imageMaxSize) {
-                    fileCount--;
-                    fileSize -= file.size;
-                }
+                fileCount--;
+                fileSize -= file.size;
 
                 removeFile(file);
                 updateTotalProgress();
@@ -720,7 +719,7 @@
                 try {
                     var responseText = (ret._raw || ret),
                         json = utils.str2json(responseText);
-                    if (json.state == 'SUCCESS') {
+                    if (json.code == 0 && json.data) {
                         _this.imageList.push(json);
                         $file.append('<span class="success"></span>');
                     } else {
@@ -776,9 +775,10 @@
             for (i = 0; i < this.imageList.length; i++) {
                 data = this.imageList[i];
                 list.push({
-                    src: prefix + data.url,
-                    _src: prefix + data.url,
-                    alt: data.original,
+                    src: prefix + data.data,
+                    _src: prefix + data.data,
+                    title: data.data || '',
+                    alt: data.data || '',
                     floatStyle: align
                 });
             }
@@ -863,9 +863,9 @@
                     'timeout': 100000,
                     'dataType': isJsonp ? 'jsonp':'',
                     'data': utils.extend({
-                        start: this.listIndex,
-                        size: this.listSize
-                    }, editor.queryCommandValue('serverparam')),
+                            start: this.listIndex,
+                            size: this.listSize
+                        }, editor.queryCommandValue('serverparam')),
                     'method': 'get',
                     'onsuccess': function (r) {
                         try {

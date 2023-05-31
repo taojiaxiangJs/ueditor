@@ -245,31 +245,20 @@ UE.plugins["fiximgclick"] = (function() {
           return fn.apply(context || this, arguments);
         };
       },
-      attachTo: function(targetObj) {
+      attachTo: function (targetObj) {
         var me = this,
-          target = (me.target = targetObj),
-          resizer = this.resizer,
-          imgPos = domUtils.getXY(target),
-          iframePos = domUtils.getXY(me.editor.iframe),
-          editorPos = domUtils.getXY(resizer.parentNode);
+            target = me.target = targetObj,
+            resizer = this.resizer,
+            imgPos = domUtils.getXY(target),
+            iframePos = domUtils.getXY(me.editor.iframe),
+            editorPos = domUtils.getXY(resizer.parentNode);
 
         domUtils.setStyles(resizer, {
-          width: target.width + "px",
-          height: target.height + "px",
-          left:
-            iframePos.x +
-              imgPos.x -
-              me.editor.document.body.scrollLeft -
-              editorPos.x -
-              parseInt(resizer.style.borderLeftWidth) +
-              "px",
-          top:
-            iframePos.y +
-              imgPos.y -
-              me.editor.document.body.scrollTop -
-              editorPos.y -
-              parseInt(resizer.style.borderTopWidth) +
-              "px"
+          'width': target.width + 'px',
+          'height': target.height + 'px',
+          'left': iframePos.x + imgPos.x - me.editor.document.body.scrollLeft - editorPos.x - parseInt(resizer.style.borderLeftWidth) + 'px',
+          // 'top': iframePos.y + imgPos.y - me.editor.document.body.scrollTop - editorPos.y - parseInt(resizer.style.borderTopWidth) + 'px'
+          'top': iframePos.y + imgPos.y - me.editor.document.documentElement.scrollTop - editorPos.y - parseInt(resizer.style.borderTopWidth) + 'px'
         });
       }
     };
