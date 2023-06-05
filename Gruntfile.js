@@ -51,7 +51,7 @@ module.exports = function(grunt) {
     encode = typeof encode === "string" ? encode.toLowerCase() : "utf8";
 
     // disDir = "dist/" + encode + "-" + server + "/";
-    disDir = "dist/";
+    disDir = "ueditor/";
   })();
 
   grunt.initConfig({
